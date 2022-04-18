@@ -12,44 +12,59 @@
       background-color: lightgrey;
     }
     #img-wrapper {
-      width: 800px;
-      height: 800px;
+      width: 3840px;
+      height: 3840px;
       background-color: white;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     img {
-      max-width: 750px;
-      max-height: 750px;
+      max-width: 3500px;
+      max-height: 3500px;
     }
   </style>
 </head>
 <body>
+  <label for="canvas_size">캔버스 사이즈</label>
+  <input type="text" name="canvas_size" id="canvas_size" value="3840" placeholder="캔버스 사이즈">
+  <label for="imaze_size">이미지 사이즈</label>
+  <input type="text" name="image_size" id="image_size" value="3500" placeholder="이미지 사이즈">
+  <button onclick="size_init()">적용</button><br>
   <input type="file" name="target-file" id="target-file">
+  <br>
+  <button onclick="make()">이미지 생성</button>
 
   <div id="img-wrapper">
     <img id="image" src="DSC_2497_High.jpg" alt="">
   </div>
-  <br>
-  <button onclick="make()">이미지 생성</button>
   <script>
     const img = new Image();
     const image_target = document.getElementById('image');
-    img.onload = function() {
+    const onloadFunc = img.onload = function() {
       var w = this.width;
       var h = this.height;
 
       if (w > h) {
-        image.style.width = '750px';
+        image.style.width = document.getElementById('image_size').value + 'px';
       } else {
-        image.style.height = '750px';
+        image.style.height = document.getElementById('image_size').value + 'px';
       }
     }
 
-    img.src = 'DSC_2497_High.jpg';
-    // console.log(img.width);
-    // console.log(img.height);
+    function size_init() {
+      const canvas_size = document.getElementById('canvas_size').value + 'px';
+      const imaze_size = document.getElementById('image_size').value + 'px';
+
+      console.log(document.getElementById('img-wrapper').style.width);
+      document.getElementById('img-wrapper').style.width = canvas_size;
+      document.getElementById('img-wrapper').style.height = canvas_size;
+
+      document.getElementById('image').style.maxWidth = image_size;
+      document.getElementById('image').style.maxHeight = image_size;
+
+      onloadFunc();
+    }
 
     function readImage(input) {
       // 인풋 태그에 파일이 있는 경우
@@ -74,7 +89,10 @@ inputImage.addEventListener("change", e => {
 
 
     function make () {
-      html2canvas($("#img-wrapper")[0]).then(function(canvas){
+      html2canvas($("#img-wrapper")[0], {
+        width: parseInt(document.getElementById('canvas_size').value),
+        height: parseInt(document.getElementById('canvas_size').value),
+      }).then(function(canvas){
           var myImage = canvas.toDataURL();
           downloadURI(myImage, "저장할 파일명.png") 
       });
